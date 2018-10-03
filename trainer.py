@@ -47,7 +47,7 @@ class Trainer:
   def train(self):
 
     real_x = torch.FloatTensor(self.batch_size, 1, 28, 28).cuda()
-    label = torch.FloatTensor(self.batch_size).cuda()
+    label = torch.FloatTensor(self.batch_size, 1).cuda()
     dis_c = torch.FloatTensor(self.batch_size, 10).cuda()
     con_c = torch.FloatTensor(self.batch_size, 2).cuda()
     noise = torch.FloatTensor(self.batch_size, 62).cuda()
@@ -65,7 +65,7 @@ class Trainer:
     optimD = optim.Adam([{'params':self.FE.parameters()}, {'params':self.D.parameters()}], lr=0.0002, betas=(0.5, 0.99))
     optimG = optim.Adam([{'params':self.G.parameters()}, {'params':self.Q.parameters()}], lr=0.001, betas=(0.5, 0.99))
 
-    dataset = dset.MNIST('./dataset', transform=transforms.ToTensor())
+    dataset = dset.MNIST('./dataset', transform=transforms.ToTensor(), download=True)
     dataloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True, num_workers=1)
 
     # fixed random variables
@@ -91,7 +91,7 @@ class Trainer:
 
         bs = x.size(0)
         real_x.data.resize_(x.size())
-        label.data.resize_(bs)
+        label.data.resize_(bs, 1)
         dis_c.data.resize_(bs, 10)
         con_c.data.resize_(bs, 2)
         noise.data.resize_(bs, 62)
